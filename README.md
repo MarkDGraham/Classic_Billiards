@@ -1,4 +1,6 @@
-# Classic Billiards Documentation
+# Documentation
+
+**Project:** Classic Billiards  
 
 **Type:** Course work  
 
