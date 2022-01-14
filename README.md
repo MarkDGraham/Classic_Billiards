@@ -1,10 +1,6 @@
 # Documentation
 
-**Project:** Classic Billiards  
-
-**Type:** Course work  
-
-**Course:** CS 480 - Computer Graphics  
+**Project:** Classic Billiards - Computer Graphics (CS 480)   
 
 **Project Duration:** 4 months   
 
