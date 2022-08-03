@@ -1,0 +1,301 @@
+#include "graphics.h"
+
+Graphics::Graphics()
+{
+
+}
+
+Graphics::~Graphics()
+{
+
+}
+
+bool Graphics::Initialize(int width, int height)
+{
+    // Used for the linux OS
+#if !defined(__APPLE__) && !defined(MACOSX)
+    // cout << glewGetString(GLEW_VERSION) << endl;
+    glewExperimental = GL_TRUE;
+
+    auto status = glewInit();
+
+    // This is here to grab the error that comes from glew init.
+    // This error is an GL_INVALID_ENUM that has no effects on the performance
+    glGetError();
+
+    //Check for error
+    if (status != GLEW_OK)
+    {
+        std::cerr << "GLEW Error: " << glewGetErrorString(status) << "\n";
+        return false;
+    }
+#endif
+
+    // For OpenGL 3
+    GLuint vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+    // Init Camera
+    m_camera = new Camera();
+    if(!m_camera->Initialize(width, height))
+    {
+        printf("Camera Failed to Initialize\n");
+        return false;
+    }
+
+
+
+    // Create the Planets and push onto planetVec;
+    //Moons initialize right after their parent planet
+    //Sun
+    tempPlanet = new Object("../res/Sun.obj");
+    tempPlanet->InitLocalParams(4.0, 0.01, 8.0, 0.01, 0.01, nullptr);
+    planetsVec.push_back(tempPlanet);
+
+    //Mercury
+    tempPlanet = new Object("../res/Mercury.obj");
+    tempPlanet->InitLocalParams(0.15, 1.59, 0.3, 10.87, 0.01, planetsVec.at(0));
+    planetsVec.push_back(tempPlanet);
+
+    //Venus
+    tempPlanet = new Object("../res/Venus.obj");
+    tempPlanet->InitLocalParams(0.18, 1.18, 0.9, 12.23, 0.01, planetsVec.at(0));
+    planetsVec.push_back(tempPlanet);
+
+    //Earth
+    tempPlanet = new Object("../res/Earth.obj");
+    tempPlanet->InitLocalParams(1.0, 1.0, 1.0, 18.0, 0.01, planetsVec.at(0));
+    planetsVec.push_back(tempPlanet);
+
+    //Mars
+    tempPlanet = new Object("../res/Mars.obj");
+    tempPlanet->InitLocalParams(0.971, 0.8, 0.5, 28.52, 0.01, planetsVec.at(0));
+    planetsVec.push_back(tempPlanet);
+
+    //Jupiter
+    tempPlanet = new Object("../res/Jupiter.obj");
+    tempPlanet->InitLocalParams(2.42, 0.44, 6.0, 59.2, 0.01, planetsVec.at(0));
+    planetsVec.push_back(tempPlanet);
+
+    //Saturn
+    tempPlanet = new Object("../res/Saturn.obj");
+    tempPlanet->InitLocalParams(2.25, 0.33, 5.0, 96.58, 0.01, planetsVec.at(0));
+    planetsVec.push_back(tempPlanet);
+
+    //Uranus
+    tempPlanet = new Object("../res/Uranus.obj");
+    tempPlanet->InitLocalParams(1.39, 0.23, 4.0, 140.2, 0.01, planetsVec.at(0));
+    planetsVec.push_back(tempPlanet);
+
+    //Neptune
+    tempPlanet = new Object("../res/Neptune.obj");
+    tempPlanet->InitLocalParams(1.49, 0.18, 3.0, 160.05, 0.01, planetsVec.at(0));
+    planetsVec.push_back(tempPlanet);
+
+    //Pluto
+    tempPlanet = new Object("../res/Pluto.obj");
+    tempPlanet->InitLocalParams(0.55, 0.15, 0.1, 320.48, 0.01, planetsVec.at(0));
+    planetsVec.push_back(tempPlanet);
+
+    //earth Moon
+    tempPlanet = new Object("../res/Moon.obj");
+    tempPlanet->InitLocalParams(1.0, -1.0, 0.3, 5.0, 80.0, planetsVec.at(3));
+    planetsVec.push_back(tempPlanet);
+
+    //mars Moons
+    tempPlanet = new Object("../res/Moon.obj");
+    tempPlanet->InitLocalParams(0.3, 0.5, 0.04, 4.0, 80.0, planetsVec.at(4));
+    planetsVec.push_back(tempPlanet);
+
+    tempPlanet = new Object("../res/Moon.obj");
+    tempPlanet->InitLocalParams(0.3, 1.0, 0.08, 2.0, 80.0, planetsVec.at(4));
+    planetsVec.push_back(tempPlanet);
+
+    //Jupiter moons
+    tempPlanet = new Object("../res/Moon.obj");
+    tempPlanet->InitLocalParams(0.3, 0.06, .3, 20.0, 80.0, planetsVec.at(5));
+    planetsVec.push_back(tempPlanet);
+
+    tempPlanet = new Object("../res/Moon.obj");
+    tempPlanet->InitLocalParams(0.3, 0.35, 0.22, 16.0, 80.0, planetsVec.at(5));
+    planetsVec.push_back(tempPlanet);
+
+    tempPlanet = new Object("../res/Moon.obj");
+    tempPlanet->InitLocalParams(0.3, 0.15, 0.35, 18.0, 80.0, planetsVec.at(5));
+    planetsVec.push_back(tempPlanet);
+
+    tempPlanet = new Object("../res/Moon.obj");
+    tempPlanet->InitLocalParams(0.3, 0.97, 0.25, 15.0, 80.0, planetsVec.at(5));
+    planetsVec.push_back(tempPlanet);
+
+    //Saturn moons
+    tempPlanet = new Object("../res/Moon.obj");
+    tempPlanet->InitLocalParams(0.3, 0.95, .09, 14.0, 80.0, planetsVec.at(6));
+    planetsVec.push_back(tempPlanet);
+
+    tempPlanet = new Object("../res/Moon.obj");
+    tempPlanet->InitLocalParams(0.3, 0.20, 0.15, 18.0, 80.0, planetsVec.at(6));
+    planetsVec.push_back(tempPlanet);
+
+    tempPlanet = new Object("../res/Moon.obj");
+    tempPlanet->InitLocalParams(0.3, 1.55, 0.13, 12.0, 80.0, planetsVec.at(6));
+    planetsVec.push_back(tempPlanet);
+
+    //Uranus moons
+    tempPlanet = new Object("../res/Moon.obj");
+    tempPlanet->InitLocalParams(0.3, 0.07, .11, 12.0, 80.0, planetsVec.at(6));
+    planetsVec.push_back(tempPlanet);
+
+    tempPlanet = new Object("../res/Moon.obj");
+    tempPlanet->InitLocalParams(0.3, 0.11, 0.12, 10.0, 80.0, planetsVec.at(6));
+    planetsVec.push_back(tempPlanet);
+
+    //Neptune moon
+    tempPlanet = new Object("../res/Moon.obj");
+    tempPlanet->InitLocalParams(0.3, 0.2, 0.1, 9.0, 80.0, planetsVec.at(6));
+    planetsVec.push_back(tempPlanet);
+
+    skyBox = new Object("../res/Sky.obj");
+    skyBox->InitLocalParams(0.0001, 0.0001, 500.0, 0.0001, 0.0001, nullptr);
+    planetsVec.push_back((skyBox));
+
+
+    // Set up the shaders
+    m_shader = new Shader();
+    if(!m_shader->Initialize())
+    {
+        printf("Shader Failed to Initialize\n");
+        return false;
+    }
+
+    // Add the vertex shader
+    if(!m_shader->AddShader(GL_VERTEX_SHADER))
+    {
+        printf("Vertex Shader failed to Initialize\n");
+        return false;
+    }
+
+    // Add the fragment shader
+    if(!m_shader->AddShader(GL_FRAGMENT_SHADER))
+    {
+        printf("Fragment Shader failed to Initialize\n");
+        return false;
+    }
+
+    // Connect the program
+    if(!m_shader->Finalize())
+    {
+        printf("Program to Finalize\n");
+        return false;
+    }
+
+    // Locate the projection matrix in the shader
+    m_projectionMatrix = m_shader->GetUniformLocation("projectionMatrix");
+    if (m_projectionMatrix == INVALID_UNIFORM_LOCATION)
+    {
+        printf("m_projectionMatrix not found\n");
+        return false;
+    }
+
+    // Locate the view matrix in the shader
+    m_viewMatrix = m_shader->GetUniformLocation("viewMatrix");
+    if (m_viewMatrix == INVALID_UNIFORM_LOCATION)
+    {
+        printf("m_viewMatrix not found\n");
+        return false;
+    }
+
+    // Locate the model matrix in the shader
+    m_modelMatrix = m_shader->GetUniformLocation("modelMatrix");
+    if (m_modelMatrix == INVALID_UNIFORM_LOCATION)
+    {
+        printf("m_modelMatrix not found\n");
+        return false;
+    }
+
+    //enable depth testing
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+
+    return true;
+}
+
+void Graphics::Update(unsigned int dt, float sysSpeed)
+{
+
+    // Update the planets
+
+    for(int i = 0; i < planetsVec.size(); i++) {
+        planetsVec.at(i)->Update(dt, sysSpeed);
+    }
+
+
+}
+
+void Graphics::CameraMovement(int& cond, bool& tog, int togCount)
+{
+	m_camera->Movement(cond, tog, togCount);
+}
+
+void Graphics::Render()
+{
+    //clear the screen
+    glClearColor(0.0, 0.0, 0.2, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Start the correct program
+    m_shader->Enable();
+
+    // Send in the projection and view to the shader
+    glUniformMatrix4fv(m_projectionMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjection()));
+    glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetView()));
+
+    // Render the object
+    for(int i = 0; i < planetsVec.size(); i++) {
+        glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(planetsVec.at(i)->GetModel()));
+        planetsVec.at(i)->Render();
+    }
+
+
+    // Get any errors from OpenGL
+    auto error = glGetError();
+    if ( error != GL_NO_ERROR )
+    {
+        string val = ErrorString( error );
+        std::cout<< "Error initializing OpenGL! " << error << ", " << val << std::endl;
+    }
+}
+
+std::string Graphics::ErrorString(GLenum error)
+{
+    if(error == GL_INVALID_ENUM)
+    {
+        return "GL_INVALID_ENUM: An unacceptable value is specified for an enumerated argument.";
+    }
+
+    else if(error == GL_INVALID_VALUE)
+    {
+        return "GL_INVALID_VALUE: A numeric argument is out of range.";
+    }
+
+    else if(error == GL_INVALID_OPERATION)
+    {
+        return "GL_INVALID_OPERATION: The specified operation is not allowed in the current state.";
+    }
+
+    else if(error == GL_INVALID_FRAMEBUFFER_OPERATION)
+    {
+        return "GL_INVALID_FRAMEBUFFER_OPERATION: The framebuffer object is not complete.";
+    }
+
+    else if(error == GL_OUT_OF_MEMORY)
+    {
+        return "GL_OUT_OF_MEMORY: There is not enough memory left to execute the command.";
+    }
+    else
+    {
+        return "None";
+    }
+}
+
